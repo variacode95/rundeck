@@ -112,7 +112,7 @@
     </div>
     <div class="col-sm-12">
         <span class="pull-right">
-            <label for="language">Language: </label>
+            <label for="language"><g:message code="user.profile.language.label" /></label>
             <select name="language" id="language" onchange="changeLanguage();">
                 <option value="">English</option>
                 <option value="es_419">Español</option>
