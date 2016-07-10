@@ -28,7 +28,8 @@ import rundeck.services.logging.ThresholdLogWriter
 
 class LoggingService implements ExecutionFileProducer {
 
-    public static final String LOG_FILE_FILETYPE = 'rdlog'
+    public static final String LOG_FILE_FILETYPE = 'rdlog.gz'
+    public static final String LOG_FILE_FILETYPE_UNCOMPRESSED = 'rdlog'
 
 
     FrameworkService frameworkService
@@ -208,7 +209,15 @@ class LoggingService implements ExecutionFileProducer {
         if (pluginName) {
             log.error("Falling back to local file storage log reader")
         }
-        return logFileStorageService.requestLogFileReader(execution, LOG_FILE_FILETYPE)
+
+        //get reader for compressed log
+        ExecutionLogReader logReader = logFileStorageService.requestLogFileReader(execution, LOG_FILE_FILETYPE)
+
+        //if compressed logs are not found, check for uncompressed logs
+        if(logReader.state == ExecutionLogState.NOT_FOUND) {
+            logReader = logFileStorageService.requestLogFileReader(execution, LOG_FILE_FILETYPE_UNCOMPRESSED)
+        }
+        return logReader
     }
 
     public OutputStream createLogOutputStream(
